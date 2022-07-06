@@ -1,56 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import { useEffect, useState } from "react";
+import { MainPage } from "./components/MainPage";
+import { SearchForm } from "./components/SearchForm";
+import { handleResponseWeather, makeResponseForecast } from "./Server.js";
+import "./styles/App.css";
+import "./styles/tabs.css";
+import { useSelector } from "react-redux/es/hooks/useSelector";
+import { useDispatch } from "react-redux/es/hooks/useDispatch";
+import { addCityData, addForecastData } from "./features/reducer/actions";
 
 function App() {
+  const [city, setCity] = useState("Bali");
+  const viewMode = useSelector((store)=>store.viewModeTab);
+  const data = useSelector((store)=>store.cityData)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (viewMode === "FORECAST") {
+        const data = await makeResponseForecast(city);
+        dispatch(addForecastData(data))
+      } else {
+        const data = await handleResponseWeather(city);
+        dispatch(addCityData(data))
+        // dispatch(addForecastData(""));
+      }
+    };
+
+    fetchData();
+  }, [city, viewMode]);
+
+  function handleResponse(cityName) {
+    setCity(cityName);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+    <div className="wrapper">
+        <SearchForm handleResponse={handleResponse} data={data} />
+        <MainPage data={data} handleResponse={handleResponse} viewMode ={viewMode} />
     </div>
   );
 }
