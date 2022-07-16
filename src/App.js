@@ -17,12 +17,9 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       if (viewMode === "FORECAST") {
-        const data = await makeResponseForecast(city);
-        dispatch(addForecastData(data))
+        dispatch(addForecastData(city))
       } else {
-        const data = await handleResponseWeather(city);
-        dispatch(addCityData(data))
-        // dispatch(addForecastData(""));
+        dispatch(addCityData(city))
       }
     };
 
@@ -35,8 +32,8 @@ function App() {
 
   return (
     <div className="wrapper">
-        <SearchForm handleResponse={handleResponse} data={data} />
-        <MainPage data={data} handleResponse={handleResponse} viewMode ={viewMode} />
+        <SearchForm handleResponse={handleResponse} city={city} />
+        <MainPage handleResponse={handleResponse} viewMode ={viewMode} />
     </div>
   );
 }

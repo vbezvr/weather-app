@@ -1,37 +1,60 @@
-import { store } from "../../app/store";
-import { storage } from "../../Storage";
+import { combineReducers } from "@reduxjs/toolkit";
 import {
   viewModeFilter,
   CHANGE_VIEW_MODE,
-  UPDATE_SAVED_CITIES,
-  ADD_CITY_DATA,
-  ADD_FORECAST_DATA,
+  REQUEST_FORECAST,
+  RECEIVE_FORECAST,
+  REQUEST_WEATHER,
+  RECEIVE_WEATHER,
 } from "./actions";
 
-export const initialState = {
-  viewModeTab: viewModeFilter.NOW,
-  savedCities: storage.getFavoriteCities(),
-  cityData: "",
-  forecastData: ""
-};
+const {NOW} = viewModeFilter;
 
-export function weatherReducer(state = initialState, action) {
+
+function cityData(state = null, action) {
+  switch(action.type) {
+    case REQUEST_WEATHER:
+      return {
+        isFetching: true
+      }
+    case RECEIVE_WEATHER:
+      return {
+        isFetching: false,
+        data: action.data
+      }
+    default:
+      return state
+  }
+}
+
+function forecastData(state=null, action) {
   switch (action.type) {
-    case CHANGE_VIEW_MODE:
+    case REQUEST_FORECAST:
       return Object.assign({}, state, {
-        viewModeTab: action.viewMode,
+        forecastData: {
+          isFetching: true,
+        },
       });
-    case ADD_CITY_DATA:
+    case RECEIVE_FORECAST:
       return Object.assign({}, state, {
-        cityData: action.data
+        forecastData: {
+          isFetching: false,
+          data: action.data,
+        },
       });
-    case ADD_FORECAST_DATA:
-      return Object.assign({}, state, {
-        forecastData: action.data,
-      });
+
     default:
       return state;
   }
 }
 
+export function viewModeTab(state = NOW, action) {
+  switch (action.type) {
+    case CHANGE_VIEW_MODE:
+      return action.viewMode;
+    default:
+      return state;
+  }
+}
 
+export const weatherReducer = combineReducers({cityData, forecastData, viewModeTab})

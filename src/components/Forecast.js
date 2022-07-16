@@ -23,14 +23,14 @@ function ForecastItem({ data }) {
 
 function Forecast() {
   const data = useSelector((store)=>store.forecastData);
-  if (!data) {
+  if (data.isFetching) {
     return (
       <div>
         <p>loading..</p>
       </div>
     )
   } else {
-    const hourlyList = data.hourly.map((hourData) => (
+    const hourlyList = data.data.hourly.map((hourData) => (
       <ForecastItem data={hourData} />
     ));
     return (

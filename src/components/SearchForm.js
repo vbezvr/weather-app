@@ -2,8 +2,8 @@ import {React, useState} from "react";
 import search from "../icons/search.svg";
 export { SearchForm };
 
-function SearchForm({handleResponse, data}) {
-  const [value, setValue] = useState(data.name);
+function SearchForm({handleResponse, city}) {
+  const [value, setValue] = useState(city);
 
   function handleSubmit(event) {
     handleResponse(value);

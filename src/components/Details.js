@@ -1,7 +1,10 @@
+import { useSelector } from "react-redux/es/hooks/useSelector.js";
 import { getTime } from "../Helper.js";
 export { Details };
 
-function Details({data}) {
+function Details() {
+  const data = useSelector((store)=>store.cityData)
+  
 
   return (
     <div>
